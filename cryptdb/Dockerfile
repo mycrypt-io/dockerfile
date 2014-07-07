@@ -30,8 +30,8 @@ RUN /usr/sbin/mysqld & sleep 10s && echo "GRANT ALL ON *.* TO root@'%' IDENTIFIE
 # Add VOLUMEs to allow backup of config and databases
 #VOLUME  ["/etc/mysql", "/var/lib/mysql"]
 
-RUN apt-get install -y sudo ruby 
-ADD cryptdb /root/cryptdb
+RUN apt-get install -y sudo ruby git 
+RUN git clone https://github.com/quickbundle/cryptdb /root/cryptdb; rm -rf /root/cryptdb/.git
 WORKDIR /root/cryptdb
 RUN ruby scripts/install.rb .
 
