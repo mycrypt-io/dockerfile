@@ -31,7 +31,8 @@ RUN /usr/sbin/mysqld & sleep 10s && echo "GRANT ALL ON *.* TO root@'%' IDENTIFIE
 #VOLUME  ["/etc/mysql", "/var/lib/mysql"]
 
 RUN apt-get install -y sudo ruby git 
-RUN git clone https://github.com/quickbundle/cryptdb /root/cryptdb; rm -rf /root/cryptdb/.git
+RUN git clone https://github.com/quickbundle/cryptdb /root/cryptdb
+#; rm -rf /root/cryptdb/.git
 WORKDIR /root/cryptdb
 RUN ruby scripts/install.rb .
 
