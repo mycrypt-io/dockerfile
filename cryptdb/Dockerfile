@@ -1,6 +1,6 @@
 FROM     debian:wheezy
 
-MAINTAINER Mike Bai "lostitle@gmail.com"
+MAINTAINER Bai Xiaoyong "lostitle@gmail.com"
 
 # make sure the package repository is up to date
 RUN apt-get update
