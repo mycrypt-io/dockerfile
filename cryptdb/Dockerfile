@@ -10,9 +10,6 @@ RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' |chpasswd
 
-#EXPOSE 22
-CMD    ["/usr/sbin/sshd", "-D"]
-
 # Set Password of MySQL root
 ENV MYSQL_PASSWORD letmein 
 # Install MySQL Server in a Non-Interactive mode. Default root password will be $MYSQL_PASSWORD
@@ -38,9 +35,12 @@ RUN ruby scripts/install.rb .
 
 RUN echo "EDBDIR=/root/cryptdb" >> /etc/environment 
 ADD cryptdb.sh /root/cryptdb.sh
-RUN chmod 755 /root/cryptdb.sh
-RUN ln -s /root/cryptdb.sh /usr/bin/cryptdb.sh
+RUN chmod 755 /root/cryptdb.sh; ln -s /root/cryptdb.sh /usr/bin/cryptdb.sh
+
+RUN echo -e "/usr/sbin/sshd -D\n\
+service mysql start\n\
+cryptdb.sh start" >/root/start-all.sh; chmod 755 /root/start-all.sh
+
+ENTRYPOINT ["/root/start.sh"]
 
 EXPOSE 22 3306 3307
-
-
