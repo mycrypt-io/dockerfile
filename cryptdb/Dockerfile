@@ -29,7 +29,6 @@ RUN /usr/sbin/mysqld & sleep 10s && echo "GRANT ALL ON *.* TO root@'%' IDENTIFIE
 
 RUN apt-get install -y sudo ruby git 
 RUN git clone https://github.com/quickbundle/cryptdb /root/cryptdb
-#; rm -rf /root/cryptdb/.git
 WORKDIR /root/cryptdb
 RUN ruby scripts/install.rb .
 
@@ -37,10 +36,14 @@ RUN echo "EDBDIR=/root/cryptdb" >> /etc/environment
 ADD cryptdb.sh /root/cryptdb.sh
 RUN chmod 755 /root/cryptdb.sh; ln -s /root/cryptdb.sh /usr/bin/cryptdb.sh
 
-RUN echo -e "/usr/sbin/sshd -D\n\
+RUN echo "#! /bin/sh\n\
+\n\
+/usr/sbin/sshd -D\n\
+sleep 1\n\
 service mysql start\n\
+sleep 1\n\
 cryptdb.sh start" >/root/start-all.sh; chmod 755 /root/start-all.sh
 
-ENTRYPOINT ["/root/start-all.sh"]
+ENTRYPOINT /root/start-all.sh
 
 EXPOSE 22 3306 3307
