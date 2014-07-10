@@ -41,6 +41,6 @@ RUN echo -e "/usr/sbin/sshd -D\n\
 service mysql start\n\
 cryptdb.sh start" >/root/start-all.sh; chmod 755 /root/start-all.sh
 
-ENTRYPOINT ["/root/start.sh"]
+ENTRYPOINT ["/root/start-all.sh"]
 
 EXPOSE 22 3306 3307
