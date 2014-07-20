@@ -28,13 +28,13 @@ RUN /usr/sbin/mysqld & sleep 10s && echo "GRANT ALL ON *.* TO root@'%' IDENTIFIE
 #VOLUME  ["/etc/mysql", "/var/lib/mysql"]
 
 RUN apt-get install -y sudo ruby git 
-RUN git clone https://github.com/quickbundle/cryptdb /root/cryptdb
-WORKDIR /root/cryptdb
+RUN git clone https://github.com/quickbundle/cryptdb /opt/cryptdb
+WORKDIR /opt/cryptdb
 RUN ruby scripts/install.rb .
 
-RUN echo "EDBDIR=/root/cryptdb" >> /etc/environment 
-ADD cryptdb.sh /root/cryptdb.sh
-RUN chmod 755 /root/cryptdb.sh; ln -s /root/cryptdb.sh /usr/bin/cryptdb.sh
+RUN echo "EDBDIR=/opt/cryptdb" >> /etc/environment 
+ADD cryptdb.sh /opt/cryptdb.sh
+RUN chmod 755 /opt/cryptdb.sh; ln -s /opt/cryptdb.sh /usr/bin/cryptdb.sh
 
 RUN echo "#! /bin/sh\n\
 \n\
@@ -42,8 +42,8 @@ RUN echo "#! /bin/sh\n\
 sleep 1\n\
 service mysql start\n\
 sleep 1\n\
-cryptdb.sh start" >/root/start-all.sh; chmod 755 /root/start-all.sh
+cryptdb.sh start" >/opt/start-all.sh; chmod 755 /opt/start-all.sh
 
-ENTRYPOINT /root/start-all.sh
+ENTRYPOINT /opt/start-all.sh
 
 EXPOSE 22 3306 3307
