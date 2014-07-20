@@ -17,8 +17,3 @@ RUN \
 RUN echo "JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /etc/environment
 #ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 
-# Define mountable directories.
-VOLUME ["/data"]
-
-# Define working directory.
-WORKDIR /data
