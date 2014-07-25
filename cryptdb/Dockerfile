@@ -6,8 +6,10 @@ MAINTAINER Bai Xiaoyong "lostitle@gmail.com"
 RUN apt-get update
 
 # Install OpenSSH
-RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
+RUN apt-get install -y openssh-server ca-certificates supervisor sudo ruby git
+RUN mkdir -p /var/run/sshd
+RUN mkdir -p /var/log/supervisor
+
 RUN echo 'root:root' |chpasswd
 
 # Set Password of MySQL root
@@ -27,7 +29,6 @@ RUN /usr/sbin/mysqld & sleep 10s && echo "GRANT ALL ON *.* TO root@'%' IDENTIFIE
 # Add VOLUMEs to allow backup of config and databases
 #VOLUME  ["/etc/mysql", "/var/lib/mysql"]
 
-RUN apt-get install -y sudo ruby git 
 RUN git clone https://github.com/quickbundle/cryptdb /opt/cryptdb
 WORKDIR /opt/cryptdb
 RUN ruby scripts/install.rb .
@@ -36,14 +37,22 @@ RUN echo "EDBDIR=/opt/cryptdb" >> /etc/environment
 ADD cryptdb.sh /opt/cryptdb.sh
 RUN chmod 755 /opt/cryptdb.sh; ln -s /opt/cryptdb.sh /usr/bin/cryptdb.sh
 
-RUN echo "#! /bin/sh\n\
+RUN echo "\
+[supervisord]\n\
+nodaemon=true\n\
 \n\
-/usr/sbin/sshd -D\n\
-sleep 1\n\
-service mysql start\n\
-sleep 1\n\
-cryptdb.sh start" >/opt/start-all.sh; chmod 755 /opt/start-all.sh
+[program:sshd]\n\
+command=/usr/sbin/sshd -D\n\
+\n\
+[program:mysql]\n\
+command=service mysql start\n\
+\n\
+[program:cryptdb]\n\
+command=/opt/cryptdb.sh start\n\
+environment=EDBDIR=\"/opt/cryptdb\"\n\
+\n\
+" > /etc/supervisor/conf.d/supervisord.conf
 
-ENTRYPOINT /opt/start-all.sh
+CMD ["/usr/bin/supervisord"]
 
 EXPOSE 22 3306 3307
