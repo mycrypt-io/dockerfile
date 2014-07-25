@@ -7,5 +7,10 @@ RUN cd /usr/local/go/src && ./make.bash --no-clean 2>&1
 ENV PATH /usr/local/go/bin:$PATH
 RUN git clone https://github.com/coreos/etcd /opt/etcd
 RUN cd /opt/etcd && ./build
+
 EXPOSE 4001 7001
-#ENTRYPOINT ["/opt/etcd/bin/etcd"]
+
+RUN echo "\
+[program:etcd]\n\
+command=/opt/etcd/bin/etcd\n\
+" >> /etc/supervisor/conf.d/supervisord.conf

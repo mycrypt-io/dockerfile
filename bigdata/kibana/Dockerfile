@@ -11,4 +11,8 @@ RUN chmod +x /usr/local/bin/run
 RUN rm -rf /tmp/*
 
 EXPOSE 80
-#CMD ["/usr/local/bin/run"]
+
+RUN echo "\
+[program:kibana]\n\
+command=/usr/local/bin/run\n\
+" >> /etc/supervisor/conf.d/supervisord.conf
