@@ -22,10 +22,21 @@ RUN echo "\
 [supervisord]\n\
 nodaemon=true\n\
 \n\
+" > /etc/supervisor/conf.d/supervisord.conf && \
+echo "\
 [program:sshd]\n\
+directory=/\n\
 command=/usr/sbin/sshd -D\n\
+user=root\n\
+autostart=true\n\
+autorestart=true\n\
+stdout_logfile=/var/log/supervisor/%(program_name)s.log\n\
+stderr_logfile=/var/log/supervisor/%(program_name)s_error.log\n\
 \n\
-" > /etc/supervisor/conf.d/supervisord.conf
+" > /etc/supervisor/conf.d/sshd.conf
+
+RUN cat /etc/supervisor/conf.d/supervisord.conf
+RUN cat /etc/supervisor/conf.d/sshd.conf
 
 CMD ["/usr/bin/supervisord"]
 
