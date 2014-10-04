@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${HADOOP_PREFIX:=/usr/local/hadoop}
+: ${HADOOP_PREFIX:=/opt/hadoop}
 
 $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
@@ -10,7 +10,8 @@ rm /tmp/*.pid
 cd $HADOOP_PREFIX/share/hadoop/common ; for cp in ${ACP//,/ }; do  echo == $cp; curl -LO $cp ; done; cd -
 
 # altering the core-site configuration
-sed -i.bak  s/localhost/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml
+sed s/HOSTNAME/$HOSTNAME/ /opt/hadoop/etc/hadoop/core-site.xml.template > /opt/hadoop/etc/hadoop/core-site.xml
+
 
 service sshd start
 $HADOOP_PREFIX/sbin/start-dfs.sh
